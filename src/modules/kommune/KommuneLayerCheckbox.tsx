@@ -6,7 +6,7 @@ export function KommuneLayerCheckbox() {
     return <div>
         <label>
             <input type={"checkbox"} checked={checked} onChange={e => setChecked(e.target.checked)}/>
-            {checked ? "hide" : "show"} Kommune Layer
+            {checked ? "hide" : "show"} kommune Layer
         </label>
     </div>;
 }

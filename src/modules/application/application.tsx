@@ -5,6 +5,7 @@ import {OSM} from 'ol/source';
 import {useGeographic} from 'ol/proj';
 import "./application.css";
 import 'ol/ol.css';
+import {KommuneLayerCheckbox} from "../kommune/KommuneLayerCheckbox";
 
 useGeographic();
 
@@ -13,13 +14,14 @@ const map = new Map({
     view: new View({center: [10,59], zoom: 10 })
 })
 export function Application() {
+    //function to zoom in where the user is
     function handleFocusUser(e : React.MouseEvent) {
         e.preventDefault();
         navigator.geolocation.getCurrentPosition(pos =>{
             const {latitude, longitude } = pos.coords;
             map.getView().animate({
                 center: [longitude, latitude],
-                zoom: 10
+                zoom: 13
             })
         })
     }
@@ -33,6 +35,7 @@ export function Application() {
         </header>
         <nav>
             <a href={"#"} onClick={handleFocusUser}>Focus on me</a>
+            <KommuneLayerCheckbox />
         </nav>
         <div ref={mapRef}></div>
     </>;

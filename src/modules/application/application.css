@@ -13,3 +13,8 @@ nav{
     gap: 1rem;
 }
 
+.kommune-overlay{
+    translate: -50% calc(-50% - 30px);
+    background-color: white;
+    padding: 0.5em;
+}

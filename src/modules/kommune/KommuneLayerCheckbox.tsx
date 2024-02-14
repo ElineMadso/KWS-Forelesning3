@@ -21,6 +21,9 @@ export function KommuneLayerCheckbox(
         if (checked) {
             setLayers(old => [...old, kommunelayer]);
         }
+        return () => {
+            setLayers((old) => old.filter(l => l != kommunelayer));
+        }
     }, [checked]);
 
     return (<div>

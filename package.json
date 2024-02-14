@@ -9,6 +9,8 @@
     "react-dom": "^18.2.0"
   },
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "npm run check && vite build",
+    "check": "prettier --check . && tsc --noEmit"
   }
 }

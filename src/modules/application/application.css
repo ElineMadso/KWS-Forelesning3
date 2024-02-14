@@ -18,3 +18,8 @@ nav{
     background-color: white;
     padding: 0.5em;
 }
+
+main {
+    display: grid;
+    grid-template-columns: 1fr auto;
+}

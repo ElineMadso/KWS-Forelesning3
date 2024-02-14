@@ -7,6 +7,7 @@ import "./application.css";
 import 'ol/ol.css';
 import {KommuneLayerCheckbox} from "../kommune/KommuneLayerCheckbox";
 import {Layer} from "ol/layer";
+import {KommuneAside} from "../kommune/KommuneAside";
 
 useGeographic();
 
@@ -14,35 +15,42 @@ const map = new Map({
     layers: [ new TileLayer({source: new OSM()})],
     view: new View({center: [10,59], zoom: 10 })
 })
-export function Application() {
-    //function to zoom in where the user is
-    function handleFocusUser(e : React.MouseEvent) {
-        e.preventDefault();
-        navigator.geolocation.getCurrentPosition(pos =>{
-            const {latitude, longitude } = pos.coords;
-            map.getView().animate({
-                center: [longitude, latitude],
-                zoom: 13
-            })
-        })
-    }
-    const [layers, setLayers] = useState<Layer[]>([
-        new TileLayer({source: new OSM()
-        })]
-    );
-    const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
-    useEffect(() => map.setTarget(mapRef.current), []);
-    useEffect(() => map.setLayers(layers), [layers]);
 
-    return <>
-        <header>
-            <h1>Kommune Kart</h1>
-        </header>
-        <nav>
-            <a href={"#"} onClick={handleFocusUser}>Focus on me</a>
-            <KommuneLayerCheckbox map={map} setLayers={setLayers}/>
-        </nav>
+export function Application() {
+  //function to zoom in where the user is
+  function handleFocusUser(e: React.MouseEvent) {
+    e.preventDefault();
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      map.getView().animate({
+        center: [longitude, latitude],
+        zoom: 13,
+      });
+    });
+  }
+  const [layers, setLayers] = useState<Layer[]>([
+    new TileLayer({ source: new OSM() }),
+  ]);
+  const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
+  useEffect(() => map.setTarget(mapRef.current), []);
+  useEffect(() => map.setLayers(layers), [layers]);
+
+  return (
+    <>
+      <header>
+        <h1>Kommune Kart</h1>
+      </header>
+      <nav>
+        <a href={"#"} onClick={handleFocusUser}>
+          Focus on me
+        </a>
+        <KommuneLayerCheckbox map={map} setLayers={setLayers} />
+      </nav>
+      <main>
         <div ref={mapRef}></div>
-    </>;
+        <KommuneAside layers={layers} />
+      </main>
+    </>
+  );
 }
 

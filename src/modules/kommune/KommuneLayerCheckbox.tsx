@@ -32,6 +32,7 @@ const kommuneSource = new VectorSource<KommuneFeatures>({
 });
 const kommunelayer = new VectorLayer({
   source: kommuneSource,
+  className: "kommune",
 });
 
 export function KommuneLayerCheckbox({

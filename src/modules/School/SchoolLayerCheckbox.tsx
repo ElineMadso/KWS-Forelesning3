@@ -46,7 +46,7 @@ function schoolStyle(f: FeatureLike) {
 }
 
 //when hovering. this style will be in action
-function activeSchoolStyle(f: FeatureLike) {
+function activeSchoolStyle(f: FeatureLike, resolution: number) {
   //our featurelike is a schoolfeature
   const feature = f as SchoolFeature;
   const school = feature.getProperties();
@@ -59,7 +59,9 @@ function activeSchoolStyle(f: FeatureLike) {
       }),
       radius: 3 + school.antall_elever / 150,
     }),
-    text: new Text({
+
+    //adding resolution because lagging
+    text: resolution < 75 ? new Text({
       text: school.navn,
       //text over point
       offsetY: -15,
@@ -67,7 +69,7 @@ function activeSchoolStyle(f: FeatureLike) {
       font: " bold 15px sans-serif",
       fill: new Fill({ color: "black"}),
       stroke: new Stroke({color: "white"}),
-    }),
+    }) : undefined,
   });
 }
 
@@ -78,8 +80,14 @@ export function SchoolLayerCheckbox() {
 
   //what happens when the pointer is moved only when schools are on
   function handlePointerMove(e: MapBrowserEvent<MouseEvent>) {
+
+    //for better user experience and cpu loading
+    const resolution = map.getView().getResolution();
+    if (!resolution || resolution > 100) {
+      return;
+    }
     //when the mouse is moving, this message will show
-    //console.log("pointermove", e.coordinate);
+      //console.log("pointermove", e.coordinate);
 
     const features: FeatureLike[] = [];
     //to get closest to the point in pixels
@@ -107,7 +115,7 @@ export function SchoolLayerCheckbox() {
 
   //when the pointer is moved
   useEffect(() => {
-    if (checked) {
+    if (checked || map.getView().getResolution() || 1000 < 100) {
       map?.on("pointermove", handlePointerMove);
     }
     return () => map?.un("pointermove", handlePointerMove);

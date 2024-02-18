@@ -19,6 +19,7 @@ const schoolLayer = new VectorLayer({
 
 interface SchoolProperties {
   antall_elever: number;
+  eierforhold: "Offentlig" | "Privat";
 }
 
 //ts, expect these features to be pointfeatures
@@ -28,11 +29,14 @@ type SchoolFeature = { getProperties(): SchoolProperties } & Feature<Point>;
 function schoolStyle(f: FeatureLike) {
   //our featurelike is a schoolfeature
   const feature = f as SchoolFeature;
+  const school = feature.getProperties();
   return new Style({
     image: new Circle({
       stroke: new Stroke({ color: "white", width: 3 }),
-      fill: new Fill({ color: "blue" }),
-      radius: 3 + feature.getProperties().antall_elever / 150,
+      fill: new Fill({
+        color: school.eierforhold === "Offentlig" ? "green" : "purple",
+      }),
+      radius: 3 + school.antall_elever / 150,
     }),
   });
 }

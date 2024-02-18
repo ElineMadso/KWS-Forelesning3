@@ -34,6 +34,7 @@ function useKommuneFeatures() {
   const [viewExtent, setViewExtent] = useState(
       map.getView().getViewStateAndExtent().extent,
   );
+
   const visibleFeatures = useMemo(
       () =>
           features?.filter((f) => f.getGeometry()?.intersectsExtent(viewExtent)),

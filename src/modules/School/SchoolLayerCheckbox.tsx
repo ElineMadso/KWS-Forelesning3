@@ -3,7 +3,7 @@ import VectorLayer from "ol/layer/Vector";
 import { useLayer } from "../kommune/KommuneLayerCheckbox";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import {Circle, Fill, Stroke, Style, Text} from "ol/style";
 import { Feature, MapBrowserEvent } from "ol";
 import { Point } from "ol/geom";
 import { FeatureLike } from "ol/Feature";
@@ -45,7 +45,7 @@ function schoolStyle(f: FeatureLike) {
   });
 }
 
-//when hovering. this style will matter
+//when hovering. this style will be in action
 function activeSchoolStyle(f: FeatureLike) {
   //our featurelike is a schoolfeature
   const feature = f as SchoolFeature;
@@ -58,6 +58,15 @@ function activeSchoolStyle(f: FeatureLike) {
         color: school.eierforhold === "Offentlig" ? "green" : "purple",
       }),
       radius: 3 + school.antall_elever / 150,
+    }),
+    text: new Text({
+      text: school.navn,
+      //text over point
+      offsetY: -15,
+      //must be correct order to function
+      font: " bold 15px sans-serif",
+      fill: new Fill({ color: "black"}),
+      stroke: new Stroke({color: "white"}),
     }),
   });
 }
@@ -113,6 +122,7 @@ export function SchoolLayerCheckbox() {
           onChange={(e) => setChecked(e.target.checked)}
         />
         Show schools
+        {activeFeature && " ( " + activeFeature.getProperties().navn + " )"}
       </label>
     </div>
   );

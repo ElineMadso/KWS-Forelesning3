@@ -2,24 +2,36 @@
     margin: unset;
 }
 
-#root{
+#root {
     display: grid;
     grid-template-rows: auto auto 1fr;
     height: 100dvh;
 }
 
-nav{
+nav {
     display: flex;
-    gap: 1rem;
-}
-
-.kommune-overlay{
-    translate: -50% calc(-50% - 30px);
-    background-color: white;
-    padding: 0.5em;
+    gap: 1em;
 }
 
 main {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
+}
+
+main aside {
+    display: grid;
+    grid-template-columns: 0;
+    transition: grid-template-columns 0.5s ease-in-out;
+    overflow-x: clip;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+main aside.visible {
+    grid-template-columns: auto;
+}
+
+main aside > * {
+    padding: 0.5rem;
+    min-width: 25ch;
 }

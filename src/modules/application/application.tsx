@@ -1,56 +1,63 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from "react";
-import {Map, View} from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import {OSM} from 'ol/source';
-import {useGeographic} from 'ol/proj';
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import TileLayer from "ol/layer/Tile";
+import { OSM } from "ol/source";
+
 import "./application.css";
-import 'ol/ol.css';
-import {KommuneLayerCheckbox} from "../kommune/KommuneLayerCheckbox";
-import {Layer} from "ol/layer";
+import "ol/ol.css";
+
+import { map, MapContext } from "../map/mapContext";
+import { Layer } from "ol/layer";
+
+//import for kommune
 import {KommuneAside} from "../kommune/KommuneAside";
+import {KommuneLayerCheckbox} from "../kommune/KommuneLayerCheckbox";
 
-useGeographic();
+//import for Fylke
+import {FylkeLayerCheckbox} from "../fylke/FylkeLayerCheckBox";
+import { FylkeAside } from "../fylke/fylkeAside";
 
-const map = new Map({
-    layers: [ new TileLayer({source: new OSM()})],
-    view: new View({center: [10,59], zoom: 10 })
-})
+//import for school
+import {SchoolLayerCheckbox} from "../School/SchoolLayerCheckbox";
+import {SchoolAside} from "../School/SchoolAside";
 
 export function Application() {
-  //function to zoom in where the user is
   function handleFocusUser(e: React.MouseEvent) {
     e.preventDefault();
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords;
       map.getView().animate({
         center: [longitude, latitude],
-        zoom: 13,
+        zoom: 10,
       });
     });
   }
+
   const [layers, setLayers] = useState<Layer[]>([
     new TileLayer({ source: new OSM() }),
   ]);
-  const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
-  useEffect(() => map.setTarget(mapRef.current), []);
   useEffect(() => map.setLayers(layers), [layers]);
 
+  const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
+  useEffect(() => map.setTarget(mapRef.current), []);
   return (
-    <>
+    <MapContext.Provider value={{ map, layers, setLayers }}>
       <header>
-        <h1>Kommune Kart</h1>
+        <h1>Kommune kart</h1>
       </header>
       <nav>
         <a href={"#"} onClick={handleFocusUser}>
           Focus on me
         </a>
-        <KommuneLayerCheckbox map={map} setLayers={setLayers} />
+        <KommuneLayerCheckbox />
+        <FylkeLayerCheckbox />
+        <SchoolLayerCheckbox />
       </nav>
       <main>
         <div ref={mapRef}></div>
-        <KommuneAside layers={layers} />
+        <FylkeAside />
+        <KommuneAside />
+        <SchoolAside />
       </main>
-    </>
+    </MapContext.Provider>
   );
 }
-

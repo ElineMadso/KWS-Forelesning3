@@ -3,6 +3,7 @@ import { MapContext } from "../map/mapContext";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
+import {Layer} from "ol/layer";
 
 const kommuneLayer = new VectorLayer({
   className: "kommuner",
@@ -12,19 +13,22 @@ const kommuneLayer = new VectorLayer({
   }),
 });
 
-export function KommuneLayerCheckbox() {
-  const [checked, setChecked] = useState(false);
-
+export function useLayer(layer: Layer, checked: boolean) {
   const { setLayers } = useContext(MapContext);
 
   useEffect(() => {
     if (checked) {
-      setLayers((old) => [...old, kommuneLayer]);
+      setLayers((old) => [...old, layer]);
     }
     return () => {
-      setLayers((old) => old.filter((l) => l !== kommuneLayer));
+      setLayers((old) => old.filter((l) => l !== layer));
     };
   }, [checked]);
+}
+
+export function KommuneLayerCheckbox() {
+  const [checked, setChecked] = useState(false);
+  useLayer(kommuneLayer, checked);
 
   return (
       <div>

@@ -18,7 +18,9 @@ const schoolLayer = new VectorLayer({
   style: schoolStyle,
 });
 
+//this implements the data of the geoJSON file
 interface SchoolProperties {
+  navn: string,
   antall_elever: number;
   eierforhold: "Offentlig" | "Privat";
 }
@@ -28,6 +30,23 @@ type SchoolFeature = { getProperties(): SchoolProperties } & Feature<Point>;
 
 //endrer utseende på punktene
 function schoolStyle(f: FeatureLike) {
+  //our featurelike is a schoolfeature
+  const feature = f as SchoolFeature;
+  const school = feature.getProperties();
+
+  return new Style({
+    image: new Circle({
+      stroke: new Stroke({ color: "white", width: 1 }),
+      fill: new Fill({
+        color: school.eierforhold === "Offentlig" ? "green" : "purple",
+      }),
+      radius: 3 + school.antall_elever / 150,
+    }),
+  });
+}
+
+//when hovering. this style will matter
+function activeSchoolStyle(f: FeatureLike) {
   //our featurelike is a schoolfeature
   const feature = f as SchoolFeature;
   const school = feature.getProperties();
@@ -46,20 +65,34 @@ function schoolStyle(f: FeatureLike) {
 export function SchoolLayerCheckbox() {
   const { map } = useContext(MapContext);
   const [checked, setChecked] = useState(true);
+  const [activeFeature, setActiveFeature] = useState<SchoolFeature>();
 
   //what happens when the pointer is moved only when schools are on
   function handlePointerMove(e: MapBrowserEvent<MouseEvent>) {
     //when the mouse is moving, this message will show
-    console.log("pointermove", e.coordinate);
+    //console.log("pointermove", e.coordinate);
 
-    const featuresAtCoordinate = schoolLayer
-      .getSource()
-        //need to have "closest", cus u cant move at the point
-      ?.getClosestFeatureToCoordinate(e.coordinate);
-
-    //console to see what the name of the closest school
-    console.log(featuresAtCoordinate?.getProperties().navn);
+    const features: FeatureLike[] = [];
+    //to get closest to the point in pixels
+    map.forEachFeatureAtPixel(e.pixel, (f) => features.push(f), {
+      hitTolerance: 1,
+      layerFilter: (l) => l === schoolLayer,
+    });
+    //this could also be kommunefilter
+    if (features.length === 1) {
+      setActiveFeature(features[0] as SchoolFeature);
+    } else {
+      setActiveFeature(undefined);
+    }
   }
+
+  //this shows the name the user is hovering
+  useEffect(() => {
+    activeFeature?.setStyle(activeSchoolStyle);
+
+    //this makes the hovering disappear when not hovering
+    return () => activeFeature?.setStyle(undefined);
+  }, [activeFeature]);
 
   useLayer(schoolLayer, checked);
 

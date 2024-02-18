@@ -3,7 +3,7 @@ import { MapContext } from "../map/mapContext";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
-import {Layer} from "ol/layer";
+import { Layer } from "ol/layer";
 
 const kommuneLayer = new VectorLayer({
   className: "kommuner",
@@ -31,15 +31,15 @@ export function KommuneLayerCheckbox() {
   useLayer(kommuneLayer, checked);
 
   return (
-      <div>
-        <label>
-          <input
-              type="checkbox"
-              checked={checked}
-              onChange={(e) => setChecked(e.target.checked)}
-          />
-          {checked ? "Hide" : "Show"} kommuner
-        </label>
-      </div>
+    <div>
+      <label>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => setChecked(e.target.checked)}
+        />
+        {checked ? "Hide" : "Show"} kommuner
+      </label>
+    </div>
   );
 }
